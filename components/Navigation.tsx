@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { ArrowDownToLine, Menu, X, ArrowUpRight } from "lucide-react";
 import { profile } from "@/data/profile";
 const links = [
-  ["about", "Identity"],
-  ["achievements", "Recognition"],
+  ["about", "About"],
+  ["achievements", "Achievements"],
   ["projects", "Projects"],
   ["experience", "Experience"],
   ["contact", "Contact"],

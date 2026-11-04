@@ -124,7 +124,7 @@ export default function Home() {
                 <a className="square-link" href={profile.resume} download>
                   <ArrowDownToLine size={25} />
                   <span>
-                    Download
+                    Download{" "}
                     <br />
                     resume <span className="mono">PNG ↗</span>
                   </span>

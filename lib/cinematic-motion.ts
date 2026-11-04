@@ -9,7 +9,7 @@ export function startCinematicMotion() {
   gsap.registerPlugin(ScrollTrigger);
   const mm = gsap.matchMedia();
   mm.add(
-    "(min-width: 1000px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+    "(min-width: 1000px) and (min-height: 900px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
     () => {
       // Navigation can finish before the optional engine arrives. Preserve the
       // visible section when pin spacers change the height above the reader.

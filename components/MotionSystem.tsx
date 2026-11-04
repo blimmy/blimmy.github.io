@@ -19,9 +19,9 @@ export default function MotionSystem() {
     document.documentElement.dataset.motion = paused ? "reduced" : "full";
     if (paused) return;
 
-    // Mobile and reduced-motion visitors never download the cinematic engine.
+    // Only load motion when the viewport can show the pinned content in full.
     const media = window.matchMedia(
-      "(min-width: 1000px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+      "(min-width: 1000px) and (min-height: 900px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
     );
     let generation = 0;
     let cleanup: (() => void) | undefined;

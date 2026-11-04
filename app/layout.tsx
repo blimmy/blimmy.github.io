@@ -75,7 +75,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <noscript>
-          <style>{`@media(max-width:640px){.site-header{height:auto;min-height:62px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}.nav-links{position:static;display:flex;flex-direction:row;overflow:auto;padding:0;border:0;gap:20px;box-shadow:none;width:100%}.nav-links a{font-size:10px;white-space:nowrap;padding:8px 0;border:0}.nav-links .nav-resume{padding:8px 0;margin:0}.menu-toggle{display:none}.hero{padding-top:125px}}`}</style>
+          <style>{`@media(max-width:999px){.site-header{height:auto;min-height:62px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}.nav-links{position:static;display:flex;flex-direction:row;overflow:auto;padding:0;border:0;gap:20px;box-shadow:none;width:100%}.nav-links a{font-size:14px;white-space:nowrap;padding:8px 0;border:0}.nav-links .nav-resume{padding:8px 0;margin:0}.menu-toggle{display:none}.hero{padding-top:155px}}`}</style>
         </noscript>
         {children}
       </body>
