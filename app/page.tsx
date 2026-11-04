@@ -38,9 +38,7 @@ export default function Home() {
           </div>
           <h1 className="hero-title" id="hero-title">
             <span className="hero-greeting">hi, my name is</span>{" "}
-            <span className="hero-name">
-              blimmy <span className="dot">!!!</span>
-            </span>
+            <span className="hero-name">blimmy</span>
           </h1>
           <div className="hero-bottom">
             <div className="hero-intro">
