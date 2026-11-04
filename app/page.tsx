@@ -27,6 +27,7 @@ export default function Home() {
       <Navigation />
       <main id="main">
         <section className="hero" id="home" aria-labelledby="hero-title">
+          <div className="hero-shade" aria-hidden="true" />
           <div className="hero-topline mono">
             <span>
               <i className="status-dot" /> SYSTEM ONLINE / PORTFOLIO 2026

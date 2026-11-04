@@ -4,78 +4,114 @@ import { Pause, Play } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { registerScrollController } from "@/lib/scroll-controller";
+
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
 export default function MotionSystem() {
-  const [paused, setPaused] = useState(false);
+  const [preference, setPreference] = useState<boolean | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const paused = preference ?? reducedMotion;
+
   useEffect(() => {
-    setPaused(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
   }, []);
+
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     document.documentElement.dataset.motion = paused ? "reduced" : "full";
     if (paused) return;
     const mm = gsap.matchMedia();
     mm.add(
-      "(min-width: 1000px) and (prefers-reduced-motion: no-preference)",
+      "(min-width: 1000px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
       () => {
         document.documentElement.dataset.cinematic = "true";
         const lenis = new Lenis({
-          duration: 0.75,
+          lerp: 0.14,
           smoothWheel: true,
           syncTouch: false,
-          anchors: true,
+          autoRaf: false,
+          // The handler below owns anchors, including focus and URL updates.
+          anchors: false,
         });
         lenis.on("scroll", ScrollTrigger.update);
         const tick = (time: number) => lenis.raf(time * 1000);
         gsap.ticker.add(tick);
+        gsap.ticker.lagSmoothing(0);
+
+        // Only promote the surfaces that actually move. The scene itself must
+        // stay untransformed so ScrollTrigger's fixed pin remains stable.
+        gsap.set(".hero-title, .hero-orb, .hero-bottom, .project-track", {
+          force3D: true,
+        });
         const hero = gsap.timeline({
           scrollTrigger: {
             trigger: ".hero",
             start: "top top",
-            end: "+=850",
+            end: () => `+=${Math.min(680, window.innerHeight * 0.7)}`,
             pin: true,
-            scrub: 1,
+            // Lenis already eases the scroll: a second scrub delay feels heavy.
+            scrub: true,
+            anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
         hero
           .to(
             ".hero-title",
-            { scale: 1.42, xPercent: -8, yPercent: -12, ease: "none" },
+            {
+              scale: 1.28,
+              xPercent: -5,
+              yPercent: -8,
+              ease: "none",
+              duration: 1,
+            },
             0,
           )
-          .to(".hero-orb", { y: -100, rotation: 24, ease: "none" }, 0)
-          .to(".hero", { backgroundColor: "#101010", ease: "none" }, 0.15)
-          .set(".hero", { color: "#F1F0EC" }, 0.4)
+          .to(
+            ".hero-orb",
+            { y: -65, rotation: 18, ease: "none", duration: 1 },
+            0,
+          )
+          // Opacity composites a static background instead of repainting the
+          // full viewport with a different background color on every frame.
+          .to(".hero-shade", { opacity: 1, ease: "none", duration: 0.7 }, 0.15)
+          .set(".hero", { color: "#F1F0EC" }, 0.5)
           .set(
             ".hero-title .dot, .hero-intro .pink, .hero-note > svg",
             { color: "#E8B8D0" },
-            0.4,
+            0.5,
           )
-          .to(".hero-bottom", { y: -20, ease: "none" }, 0);
+          .to(".hero-bottom", { y: -12, ease: "none", duration: 1 }, 0);
+
         gsap.fromTo(
           ".identity-statement",
-          { x: 36 },
+          { x: 24 },
           {
             x: 0,
             scrollTrigger: {
               trigger: "#about",
               start: "top 85%",
               end: "top 25%",
-              scrub: 1,
+              scrub: true,
             },
           },
         );
         gsap.utils.toArray<HTMLElement>(".achievement-row").forEach((row) => {
           gsap.fromTo(
             row.querySelector(".achievement-rank"),
-            { y: 28 },
+            { y: 18 },
             {
               y: 0,
               scrollTrigger: {
                 trigger: row,
                 start: "top 90%",
                 end: "top 45%",
-                scrub: 0.7,
+                scrub: true,
               },
             },
           );
@@ -83,9 +119,12 @@ export default function MotionSystem() {
         const track = document.querySelector<HTMLElement>(".project-track");
         const viewport =
           document.querySelector<HTMLElement>(".project-viewport");
-        if (track && viewport) {
-          const distance = () =>
-            Math.max(0, track.scrollWidth - viewport.clientWidth);
+        const panels = Array.from(
+          track?.querySelectorAll<HTMLElement>(".project-panel") ?? [],
+        );
+        const distance = () =>
+          Math.max(0, (track?.scrollWidth ?? 0) - (viewport?.clientWidth ?? 0));
+        if (track && viewport && panels.length > 1) {
           gsap.to(track, {
             x: () => -distance(),
             ease: "none",
@@ -95,71 +134,164 @@ export default function MotionSystem() {
               start: "top 70px",
               end: () => `+=${distance()}`,
               pin: true,
-              scrub: 0.8,
+              scrub: true,
+              anticipatePin: 1,
               invalidateOnRefresh: true,
             },
           });
         }
+        const panelScroll = (panel: HTMLElement) => {
+          const trigger = ScrollTrigger.getById("project-gallery");
+          if (!trigger || !panels.length) return null;
+          const travel = distance();
+          const offset = Math.min(
+            travel,
+            Math.max(0, panel.offsetLeft - panels[0].offsetLeft),
+          );
+          return (
+            trigger.start +
+            (trigger.end - trigger.start) * (travel ? offset / travel : 0)
+          );
+        };
+        const unregister = registerScrollController({
+          moveProject(direction) {
+            const positions = panels.map(panelScroll);
+            if (!positions.length || positions.some((p) => p === null)) return;
+            const targets = positions as number[];
+            const nearest = targets.reduce(
+              (best, target, i) =>
+                Math.abs(target - lenis.targetScroll) <
+                Math.abs(targets[best] - lenis.targetScroll)
+                  ? i
+                  : best,
+              0,
+            );
+            const next = Math.max(
+              0,
+              Math.min(targets.length - 1, nearest + direction),
+            );
+            lenis.scrollTo(targets[next], { duration: 0.65, easing: easeOut });
+          },
+        });
+
         gsap.fromTo(
           ".contact-title",
-          { xPercent: -4 },
+          { xPercent: -3 },
           {
             xPercent: 0,
             scrollTrigger: {
               trigger: "#contact",
               start: "top bottom",
               end: "top 25%",
-              scrub: 1,
+              scrub: true,
             },
           },
         );
+        // Pin spacers change document height synchronously; update the scroll
+        // limit before the first navigation can clamp to the old page height.
+        lenis.resize();
         const onAnchor = (event: MouseEvent) => {
-          const anchor = (
-            event.target as HTMLElement
-          ).closest<HTMLAnchorElement>('a[href^="/#"], a[href^="#"]');
           if (
-            !anchor ||
+            event.defaultPrevented ||
+            event.button !== 0 ||
             event.ctrlKey ||
             event.metaKey ||
             event.shiftKey ||
             event.altKey
           )
             return;
-          const hash = anchor.hash;
-          const target = hash ? document.getElementById(hash.slice(1)) : null;
-          if (target) {
-            event.preventDefault();
-            lenis.scrollTo(target, {
-              offset: -80,
-              onComplete: () => {
-                history.replaceState(null, "", hash);
-                target.setAttribute("tabindex", "-1");
-                target.focus({ preventScroll: true });
-              },
-            });
+          const anchor = (event.target as Element).closest<HTMLAnchorElement>(
+            "a[href]",
+          );
+          if (
+            !anchor ||
+            anchor.hasAttribute("download") ||
+            (anchor.target && anchor.target !== "_self")
+          )
+            return;
+          const url = new URL(anchor.href);
+          if (
+            url.origin !== location.origin ||
+            url.pathname !== location.pathname ||
+            !url.hash
+          )
+            return;
+          let id: string;
+          try {
+            id = decodeURIComponent(url.hash.slice(1));
+          } catch {
+            return;
           }
+          const target = document.getElementById(id);
+          if (!target) return;
+          event.preventDefault();
+          // Lenis respects the existing CSS scroll-padding; no duplicate offset.
+          lenis.scrollTo(target, {
+            duration: 0.85,
+            easing: easeOut,
+            onComplete: () => {
+              history.replaceState(null, "", url.hash);
+              target.setAttribute("tabindex", "-1");
+              target.focus({ preventScroll: true });
+            },
+          });
         };
         document.addEventListener("click", onAnchor);
-        const focusProject = (e: FocusEvent) => {
-          const panel = (e.target as HTMLElement).closest<HTMLElement>(
-            ".project-panel",
-          );
-          const trigger = ScrollTrigger.getById("project-gallery");
-          if (panel && trigger) {
-            const panels = Array.from(track?.children ?? []);
-            const index = panels.indexOf(panel);
-            const ratio = index / Math.max(1, panels.length - 1);
-            lenis.scrollTo(
-              trigger.start + (trigger.end - trigger.start) * ratio,
-              { immediate: true },
-            );
-          }
+
+        let pointerFocus = false;
+        let pointerTimer: ReturnType<typeof setTimeout>;
+        const onPointerDown = () => {
+          pointerFocus = true;
+          clearTimeout(pointerTimer);
+          pointerTimer = setTimeout(() => {
+            pointerFocus = false;
+          }, 0);
+        };
+        document.addEventListener("pointerdown", onPointerDown, {
+          passive: true,
+        });
+        const focusProject = (event: FocusEvent) => {
+          if (pointerFocus || !viewport) return;
+          const target = event.target as HTMLElement;
+          const panel = target.closest<HTMLElement>(".project-panel");
+          if (!panel) return;
+          const bounds = target.getBoundingClientRect();
+          const frame = viewport.getBoundingClientRect();
+          if (bounds.left >= frame.left - 1 && bounds.right <= frame.right + 1)
+            return;
+          const destination = panelScroll(panel);
+          if (destination !== null)
+            lenis.scrollTo(destination, { immediate: true });
         };
         track?.addEventListener("focusin", focusProject);
-        document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+        // Filters and disclosure controls can change section heights. Refresh
+        // once after layout changes, never from the per-frame scroll handler.
+        let refreshTimer: ReturnType<typeof setTimeout>;
+        const refresh = () => {
+          clearTimeout(refreshTimer);
+          refreshTimer = setTimeout(() => {
+            ScrollTrigger.refresh();
+            lenis.resize();
+          }, 120);
+        };
+        const observer = new ResizeObserver(refresh);
+        document
+          .querySelectorAll<HTMLElement>("main > section")
+          .forEach((section) => observer.observe(section));
+        let disposed = false;
+        document.fonts.ready.then(() => {
+          if (!disposed) refresh();
+        });
         return () => {
+          disposed = true;
+          observer.disconnect();
+          clearTimeout(refreshTimer);
+          clearTimeout(pointerTimer);
+          unregister();
           delete document.documentElement.dataset.cinematic;
           document.removeEventListener("click", onAnchor);
+          document.removeEventListener("pointerdown", onPointerDown);
           track?.removeEventListener("focusin", focusProject);
           gsap.ticker.remove(tick);
           lenis.destroy();
@@ -172,7 +304,7 @@ export default function MotionSystem() {
     <button
       className="motion-toggle mono"
       aria-pressed={paused}
-      onClick={() => setPaused(!paused)}
+      onClick={() => setPreference(!paused)}
       title="Toggle cinematic motion"
       aria-label="Toggle cinematic motion"
     >

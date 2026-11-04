@@ -270,8 +270,7 @@ details p {
   left: 0;
   right: 0;
   height: 70px;
-  background: rgba(241, 240, 236, 0.96);
-  backdrop-filter: blur(14px);
+  background: var(--paper);
   z-index: 50;
   display: flex;
   align-items: center;
@@ -357,6 +356,7 @@ details p {
 }
 /* Hero / typography and metal study */
 .hero {
+  isolation: isolate;
   min-height: 830px;
   height: 100svh;
   max-height: 1150px;
@@ -2792,4 +2792,26 @@ html:not([data-cinematic="true"]) .gallery-controls {
   .experience-date > .mono {
     font-size: 10px;
   }
+}
+
+/* Keep one scrolling engine and composite only the moving scene surfaces. */
+html.lenis {
+  scroll-behavior: auto;
+}
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--ink);
+  opacity: 0;
+}
+html[data-cinematic="true"] .hero-shade {
+  will-change: opacity;
+}
+html[data-cinematic="true"] .hero-title,
+html[data-cinematic="true"] .hero-orb,
+html[data-cinematic="true"] .hero-bottom,
+html[data-cinematic="true"] .project-track {
+  will-change: transform;
 }

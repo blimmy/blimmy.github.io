@@ -107,7 +107,7 @@ Replace the asset in `public/assets/resume/` and update `profile.resume` in `dat
 
 The terminal accepts only predefined commands; no `eval`, shell execution, or network commands. Commands: `help`, `whoami`, `ls`, `skills`, `achievements`, `projects`, `experience`, `certificates`, `contact`, `clear`, `cat resume.txt`. Arrow keys recall up to 100 commands; Tab completes a recognized prefix; Ctrl+L clears. Empty input does not trap Tab. Output is capped to 50 entries.
 
-Desktop cinematic motion uses GSAP ScrollTrigger and Lenis on the same ticker. It pins the hero and project exhibition, scrubs typography and background color, and keeps browser-native scrolling. The project controls and keyboard focus move to the correct panel. Mobile, reduced motion, and disabled JavaScript use a normal vertical gallery. The on-page motion toggle disables cinematic motion immediately. Native dialogs handle focus containment and Escape. Core content is statically rendered and available before hydration.
+Desktop cinematic motion uses GSAP ScrollTrigger and Lenis on the same ticker. Lenis provides the only scroll easing; scroll-linked timelines use direct scrubbing to avoid compounded delay. The hero’s dark background is composited with opacity, and the fixed header uses a solid surface to reduce painting during scroll. Anchors and animated project buttons share one controller; keyboard focus reveals offscreen panels while pointer clicks keep the current position. Section size changes refresh pin positions outside the animation loop. Mobile, touch devices, reduced motion, and disabled JavaScript use a normal vertical gallery. The on-page motion toggle disables cinematic motion immediately, and OS motion preference changes are handled live. Native dialogs handle focus containment and Escape. Core content is statically rendered and available before hydration.
 
 ## Verify
 
@@ -117,7 +117,7 @@ npm run build
 npm test
 ```
 
-The tests cover factual content rendering, terminal history/autocomplete/safe error handling, certificate filtering and dialogs, research search, MDX code copy, mobile navigation/overflow, keyboard project navigation, motion toggling, no-JavaScript readability, and automated WCAG A/AA checks. Automated checks complement manual desktop/mobile inspection; they are not a substitute for a complete assistive-technology audit.
+The tests cover factual content rendering, terminal history/autocomplete/safe error handling, certificate filtering and dialogs, research search, MDX code copy, mobile navigation/overflow, keyboard project navigation, continuous gallery movement, anchor alignment, live motion preferences, no-JavaScript readability, and automated WCAG A/AA checks. Automated checks complement manual desktop/mobile inspection; they are not a substitute for a complete assistive-technology audit.
 
 ## Deploy to GitHub Pages
 

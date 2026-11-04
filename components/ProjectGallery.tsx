@@ -6,7 +6,7 @@ import {
   ArrowUpRight,
   Image as ImageIcon,
 } from "lucide-react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { moveProject } from "@/lib/scroll-controller";
 import { projects, type Project } from "@/data/projects";
 import { visible } from "@/lib/content";
 function ProjectMedia({ project, index }: { project: Project; index: number }) {
@@ -48,18 +48,7 @@ function ProjectMedia({ project, index }: { project: Project; index: number }) {
 export default function ProjectGallery() {
   const records = visible(projects);
   const move = (direction: number) => {
-    const st = ScrollTrigger.getById("project-gallery");
-    if (st) {
-      const current = Math.round(st.progress * (records.length - 1));
-      const next = Math.max(
-        0,
-        Math.min(records.length - 1, current + direction),
-      );
-      window.scrollTo({
-        top: st.start + ((st.end - st.start) * next) / (records.length - 1),
-        behavior: "instant",
-      });
-    } else {
+    if (!moveProject(direction)) {
       const panels = Array.from(
         document.querySelectorAll<HTMLElement>(".project-panel"),
       );
@@ -74,7 +63,12 @@ export default function ProjectGallery() {
             (current < 0 ? panels.length - 1 : current) + direction,
           ),
         )
-      ]?.scrollIntoView({ behavior: "instant", block: "start" });
+      ]?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+        block: "start",
+      });
     }
   };
   return (

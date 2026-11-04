@@ -5,6 +5,7 @@ import "@fontsource/manrope/latin-500.css";
 import "@fontsource/manrope/latin-600.css";
 import "@fontsource/manrope/latin-700.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://blimmy.github.io"),
