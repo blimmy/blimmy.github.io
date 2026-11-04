@@ -1,12 +1,34 @@
 import type { Metadata } from "next";
-import "@fontsource/anton/latin-400.css";
-import "@fontsource/manrope/latin-400.css";
-import "@fontsource/manrope/latin-500.css";
-import "@fontsource/manrope/latin-600.css";
-import "@fontsource/manrope/latin-700.css";
-import "@fontsource/ibm-plex-mono/latin-400.css";
+import localFont from "next/font/local";
 import "lenis/dist/lenis.css";
 import "./globals.css";
+
+// Prioritize the large greeting; secondary fonts are discovered from CSS.
+// One variable file covers every Manrope weight, with adjusted fallbacks.
+const display = localFont({
+  src: "../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2",
+  variable: "--font-display",
+  weight: "400",
+  display: "swap",
+  fallback: ["Impact", "sans-serif"],
+});
+const sans = localFont({
+  src: "../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2",
+  variable: "--font-sans",
+  weight: "200 800",
+  display: "swap",
+  preload: false,
+  fallback: ["Arial", "sans-serif"],
+});
+const mono = localFont({
+  src: "../node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2",
+  variable: "--font-mono",
+  weight: "400",
+  display: "swap",
+  preload: false,
+  fallback: ["monospace"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://blimmy.github.io"),
   title: {
@@ -44,7 +66,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+    >
       <body>
         <a className="skip-link" href="#main">
           Skip to content

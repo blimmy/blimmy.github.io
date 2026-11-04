@@ -5,9 +5,9 @@
   --pink: #e8b8d0;
   --red: #9b2638;
   --line: rgba(16, 16, 16, 0.2);
-  --mono: "IBM Plex Mono", monospace;
-  --display: "Anton", Impact, sans-serif;
-  --sans: "Manrope", Arial, sans-serif;
+  --mono: var(--font-mono), monospace;
+  --display: var(--font-display), Impact, sans-serif;
+  --sans: var(--font-sans), Arial, sans-serif;
 }
 * {
   box-sizing: border-box;

@@ -84,3 +84,84 @@ test("OS motion preference disables cinematic scrolling while the page is open",
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator(".pin-spacer")).toHaveCount(2);
 });
+
+test("cinematic motion starts and cleans up when resizing between mobile and desktop", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
+  await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  for (let i = 0; i < 2; i++) {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await expect(page.locator(".pin-spacer")).toHaveCount(2);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.locator(".pin-spacer")).toHaveCount(0);
+    await expect(page.locator("html")).not.toHaveAttribute("data-cinematic");
+  }
+});
+
+test("pausing during a slow motion download prevents late activation", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  let requested!: () => void;
+  const download = new Promise<void>((resolve) => (requested = resolve));
+  await page.route("**/_next/static/chunks/*.js", async (route) => {
+    requested();
+    await gate;
+    await route.continue();
+  });
+  try {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await download;
+    const toggle = page.getByRole("button", { name: "Toggle cinematic motion" });
+    await toggle.click();
+    release();
+    await page.waitForLoadState("networkidle");
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".pin-spacer")).toHaveCount(0);
+    await toggle.click();
+    await expect(page.locator(".pin-spacer")).toHaveCount(2);
+    expect(errors).toEqual([]);
+  } finally {
+    release();
+  }
+});
+
+test("navigation stays at its destination when the motion engine arrives late", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route("**/_next/static/chunks/*.js", async (route) => {
+    await gate;
+    await route.continue();
+  });
+  try {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { name: "Experience", exact: true })
+      .click();
+    const destinationY = async () =>
+      Math.round((await page.locator("#experience").boundingBox())!.y);
+    await expect.poll(destinationY).toBeLessThan(100);
+    release();
+    await expect(page.locator("html")).toHaveAttribute("data-cinematic", "true");
+    await page.waitForLoadState("networkidle");
+    await expect.poll(destinationY).toBeGreaterThanOrEqual(85);
+    await expect.poll(destinationY).toBeLessThan(100);
+  } finally {
+    release();
+  }
+});
