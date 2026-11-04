@@ -7,7 +7,9 @@ test("resume content, safe terminal, history, autocomplete and clear", async ({
   page.on("pageerror", (e) => errors.push(e.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "BLIMMY." })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "hi, my name is blimmy !!!" }),
+  ).toBeVisible();
   const input = page.getByRole("textbox", { name: "Terminal command" });
   await input.fill("whoami");
   await input.press("Enter");

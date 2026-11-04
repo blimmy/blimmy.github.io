@@ -37,7 +37,10 @@ export default function Home() {
             </span>
           </div>
           <h1 className="hero-title" id="hero-title">
-            BLIMMY<span className="dot">.</span>
+            <span className="hero-greeting">hi, my name is</span>{" "}
+            <span className="hero-name">
+              blimmy <span className="dot">!!!</span>
+            </span>
           </h1>
           <div className="hero-bottom">
             <div className="hero-intro">

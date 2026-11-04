@@ -64,9 +64,9 @@ export default function MotionSystem() {
           .to(
             ".hero-title",
             {
-              scale: 1.28,
-              xPercent: -5,
-              yPercent: -8,
+              scale: 1.1,
+              xPercent: 0,
+              yPercent: -4,
               ease: "none",
               duration: 1,
             },
