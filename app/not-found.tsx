@@ -1,1 +1,15 @@
-export default function NotFound(){return <main id="main" className="not-found"><span className="eyebrow">BLIMMY / UNKNOWN ADDRESS</span><h1>404<span className="pink">.</span></h1><h2>Outside the archive.</h2><p>This page could not be found.</p><a className="pill-link" href="/">Return home ↗</a></main>}
+export default function NotFound() {
+  return (
+    <main id="main" className="not-found">
+      <span className="eyebrow">BLIMMY / UNKNOWN ADDRESS</span>
+      <h1>
+        404<span className="pink">.</span>
+      </h1>
+      <h2>Outside the archive.</h2>
+      <p>This page could not be found.</p>
+      <a className="pill-link" href="/">
+        Return home ↗
+      </a>
+    </main>
+  );
+}
