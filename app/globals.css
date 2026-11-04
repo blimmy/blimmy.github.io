@@ -377,7 +377,7 @@ details p {
 }
 .hero-title {
   font-family: var(--display);
-  font-size: clamp(120px, 29.5vw, 440px);
+  font-size: clamp(120px, min(29.5vw, 42svh), 440px);
   font-weight: 400;
   letter-spacing: -0.028em;
   line-height: 0.96;
@@ -415,7 +415,7 @@ details p {
 }
 .hero-orb {
   width: 100%;
-  max-width: 350px;
+  max-width: min(350px, 34svh);
   justify-self: center;
   margin-top: -5px;
 }
