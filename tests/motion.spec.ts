@@ -30,19 +30,27 @@ test("project buttons animate and pointer focus does not jump to another scroll 
     .getByRole("link", { name: "Projects", exact: true })
     .click();
   await expect(page).toHaveURL(/#projects$/);
-  const before = await page.evaluate(() => scrollY);
-  // A synthetic click lets us inspect the first animation frame instead of
-  // waiting for Playwright's mouse stabilization time.
-  await page
+  const movement = await page
     .getByRole("button", { name: "Next project" })
-    .evaluate((button) => (button as HTMLButtonElement).click());
-  const firstFrame = await page.evaluate(
-    () =>
-      new Promise<number>((resolve) =>
-        requestAnimationFrame(() => resolve(scrollY)),
-      ),
-  );
-  expect(firstFrame - before).toBeLessThan(150);
+    .evaluate(async (button) => {
+      const before = scrollY;
+      (button as HTMLButtonElement).click();
+      const immediate = scrollY;
+      const samples: number[] = [];
+      const start = performance.now();
+      await new Promise<void>((resolve) => {
+        const sample = () => {
+          samples.push(scrollY);
+          if (performance.now() - start < 900) requestAnimationFrame(sample);
+          else resolve();
+        };
+        requestAnimationFrame(sample);
+      });
+      return { before, immediate, samples };
+    });
+  // Assert behavior without assuming the CI machine's frame rate.
+  expect(Math.abs(movement.immediate - movement.before)).toBeLessThan(2);
+  expect(new Set(movement.samples).size).toBeGreaterThan(4);
   await expect
     .poll(async () => (await page.locator("#linux-shell").boundingBox())!.x)
     .toBeGreaterThanOrEqual(0);
@@ -51,7 +59,7 @@ test("project buttons animate and pointer focus does not jump to another scroll 
     .toBeLessThan(100);
   await page.waitForTimeout(200);
   const settled = await page.evaluate(() => scrollY);
-  expect(settled - before).toBeGreaterThan(500);
+  expect(settled - movement.before).toBeGreaterThan(500);
   await page.locator("#linux-shell summary").click();
   await expect(page.locator("#linux-shell details")).toHaveAttribute(
     "open",
