@@ -82,6 +82,8 @@ test("MDX detail has static content, expandable explanation and code copy", asyn
   page,
   context,
 }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/research/writeup-template/");
   await expect(
@@ -98,6 +100,7 @@ test("MDX detail has static content, expandable explanation and code copy", asyn
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
     "def investigation_notes",
   );
+  expect(errors).toEqual([]);
 });
 test("mobile menu, no overflow and no pinned layout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
