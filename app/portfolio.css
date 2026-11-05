@@ -1,0 +1,367 @@
+/* A readable overview first; optional exploration remains in the same page. */
+.profile-home .section-pad {
+  padding-block: 72px;
+}
+.profile-home .section-heading {
+  margin-bottom: 36px;
+}
+.profile-home .section-heading h2 {
+  font-size: clamp(32px, 3.7vw, 54px);
+  line-height: 1.2;
+}
+.profile-home .hero {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 112px max(5vw, calc((100vw - 1320px) / 2)) 0;
+}
+.hero-profile {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(240px, 0.8fr);
+  gap: 64px;
+  align-items: center;
+  padding: 32px 0 40px;
+}
+.profile-home .hero-intro {
+  padding: 0;
+}
+.profile-home .hero-title {
+  margin: 0;
+  font-size: clamp(96px, 11vw, 160px);
+}
+.profile-home .hero-greeting {
+  font-size: clamp(24px, 2.4vw, 34px);
+}
+.profile-home .hero-intro .hero-full-name {
+  margin: 16px 0 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.profile-home .hero-intro .hero-role {
+  font-size: clamp(18px, 1.8vw, 24px);
+  line-height: 1.5;
+  margin: 0 0 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.profile-home .hero-intro .hero-summary {
+  font-size: var(--text-body);
+  max-width: 56ch;
+  margin: 0 0 24px;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.profile-home .hero-actions .pill-link {
+  gap: 12px;
+  min-height: 48px;
+  font-size: var(--text-control);
+}
+.primary-action {
+  background: var(--red);
+  color: var(--paper);
+  border-color: var(--red);
+  font-weight: 600;
+}
+.resume-format {
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.hero-email {
+  display: inline-flex;
+  flex-basis: 100%;
+  gap: 10px;
+  align-items: center;
+  width: fit-content;
+  min-height: 44px;
+  font-size: var(--text-control);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.profile-home .hero-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0;
+  min-height: 0;
+}
+.profile-home .hero-orb {
+  width: 100%;
+  max-width: 300px;
+  margin: 0;
+  align-self: center;
+}
+.profile-home .hero-note {
+  padding: 20px 0 0;
+  border-top: 1px solid currentColor;
+  width: 100%;
+}
+.profile-home .hero-note > svg {
+  float: right;
+  margin: 0 0 12px 16px;
+}
+.profile-home .hero-note .eyebrow {
+  margin-bottom: 8px;
+}
+.profile-home .hero-note p {
+  font-size: 20px;
+  line-height: 1.5;
+  margin: 0;
+}
+.profile-home .hero-baseline {
+  gap: 24px;
+  opacity: 1;
+  padding-block: 18px;
+  flex-wrap: wrap;
+}
+@media (min-width: 1000px) and (min-height: 900px) and (pointer: fine) {
+  .profile-home .hero-baseline {
+    padding-right: 200px;
+  }
+}
+@media (max-width: 999px), (max-height: 899px), (pointer: coarse) {
+  .motion-toggle {
+    display: none;
+  }
+}
+.profile-home .identity-statement {
+  margin: 0;
+}
+.overview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.overview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--line);
+  padding: 26px;
+}
+.overview-card .eyebrow {
+  margin: 0 0 6px;
+}
+.overview-card h3 {
+  font-size: 23px;
+  line-height: 1.4;
+}
+.overview-card p {
+  font-size: var(--text-body);
+}
+.overview-card .overview-detail {
+  color: #494942;
+  font-size: var(--text-control);
+}
+.overview-card .text-link,
+.overview-card details {
+  margin-top: auto;
+}
+.overview-card details {
+  width: 100%;
+}
+.overview-card ul {
+  margin-top: 0;
+}
+.overview-award {
+  background: #e8b8d02e;
+  border-color: #a57588;
+}
+.overview-award h3 {
+  color: var(--red);
+}
+.overview-about {
+  border-bottom: 1px solid var(--line);
+  margin-top: 24px;
+}
+.overview-about p {
+  font-size: var(--text-body);
+  max-width: 68ch;
+  padding-bottom: 8px;
+}
+.profile-home .experience-row {
+  padding-block: 28px;
+}
+.profile-home .project-scene {
+  padding-block: 0;
+}
+.project-jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.project-jump-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: var(--text-control);
+}
+.project-jump-links a .mono {
+  color: var(--red);
+}
+.project-jump-links a:hover,
+.project-jump-links a:focus-visible {
+  background: var(--pink);
+}
+html[data-cinematic="true"] .project-jump-links {
+  display: none;
+}
+.profile-home .project-role {
+  margin-block: 16px;
+}
+.project-role strong {
+  margin-right: 8px;
+}
+html:not([data-cinematic="true"]) .profile-home .project-panel {
+  grid-template-columns: minmax(180px, 0.65fr) minmax(0, 1.35fr);
+  gap: 36px;
+  padding-block: 28px;
+  margin-bottom: 0;
+}
+html:not([data-cinematic="true"]) .profile-home .project-art {
+  min-height: 240px;
+  align-self: start;
+}
+html:not([data-cinematic="true"]) .profile-home .project-art-type {
+  font-size: clamp(32px, 3.3vw, 48px);
+}
+html:not([data-cinematic="true"]) .profile-home .art-asterisk {
+  font-size: 48px;
+}
+.profile-home .project-info > p,
+.profile-home .project-info h3 {
+  max-width: 60ch;
+}
+.profile-home .project-info h3 {
+  font-size: clamp(24px, 2.3vw, 32px);
+}
+.profile-home .project-info details[open] {
+  background: #e7e6e1;
+  padding-inline: 16px;
+}
+.profile-home .project-info details p:last-child {
+  margin-bottom: 20px;
+}
+.profile-home .achievement-feature {
+  grid-template-columns: 1fr 1.3fr;
+}
+.profile-home .award-number {
+  font-size: clamp(120px, 13vw, 190px);
+}
+.profile-home .terminal-section {
+  border-top: 1px solid #525250;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .overview-card {
+    transition:
+      border-color 180ms,
+      box-shadow 180ms;
+  }
+  .overview-card:focus-within,
+  .overview-card:hover {
+    border-color: var(--red);
+    box-shadow: 0 6px 0 #9b26380a;
+  }
+}
+@media (max-width: 999px) {
+  .hero-profile {
+    grid-template-columns: minmax(0, 1.5fr) minmax(180px, 0.7fr);
+    gap: 32px;
+  }
+  .profile-home .hero-orb {
+    max-width: 220px;
+  }
+  .profile-home .hero-note p {
+    font-size: 17px;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .overview-card {
+    padding: 24px;
+  }
+}
+@media (max-width: 640px) {
+  .profile-home .section-pad {
+    padding-block: 52px;
+  }
+  .profile-home .hero {
+    padding-top: 94px;
+  }
+  .hero-profile {
+    display: block;
+    padding-block: 28px;
+  }
+  .profile-home .hero-title {
+    font-size: 96px;
+  }
+  .profile-home .hero-bottom {
+    display: none;
+  }
+  .profile-home .hero-summary {
+    max-width: none;
+  }
+  .profile-home .hero-baseline {
+    gap: 12px;
+  }
+  .overview-links {
+    margin-top: 16px;
+  }
+  .overview-card {
+    padding: 22px;
+  }
+  .project-jump-links {
+    flex-direction: column;
+  }
+  .project-jump-links a {
+    padding-inline: 12px;
+  }
+  .project-jump-links a > svg {
+    margin-left: auto;
+  }
+  html:not([data-cinematic="true"]) .profile-home .project-panel {
+    gap: 22px;
+  }
+  html:not([data-cinematic="true"]) .profile-home .project-art {
+    width: 100%;
+    min-height: 200px;
+  }
+  .profile-home .achievement-feature {
+    grid-template-columns: 1fr;
+  }
+}
+@media print {
+  .profile-home .hero {
+    padding-top: 0;
+  }
+  .profile-home .hero-bottom,
+  .hero-actions,
+  .project-jump-links,
+  .overview-links {
+    display: none;
+  }
+  .hero-profile {
+    display: block;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .overview-card,
+  .experience-row,
+  .project-panel {
+    break-inside: avoid;
+  }
+}

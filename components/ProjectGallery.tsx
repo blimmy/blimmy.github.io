@@ -1,11 +1,6 @@
 "use client";
 import { useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  Image as ImageIcon,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { moveProject } from "@/lib/scroll-controller";
 import { projects, type Project } from "@/data/projects";
 import { visible } from "@/lib/content";
@@ -35,9 +30,7 @@ function ProjectMedia({ project, index }: { project: Project; index: number }) {
             ))}
           </div>
           <div className="project-art-bottom mono">
-            <span>
-              <ImageIcon size={13} /> SCREENSHOT PENDING
-            </span>
+            <span>SYSTEMS / SOFTWARE</span>
             <span>{project.stack[0]}</span>
           </div>
         </>
@@ -75,11 +68,11 @@ export default function ProjectGallery() {
     <div className="project-scene">
       <div className="section-heading project-heading">
         <div>
-          <span className="eyebrow">07 / SELECTED PROJECTS</span>
+          <span className="eyebrow">04 / SELECTED PROJECTS</span>
           <h2>
-            Built from
+            Selected
             <br />
-            <span className="serif">the inside out.</span>
+            <span className="serif">projects.</span>
           </h2>
         </div>
         <div className="gallery-controls">
@@ -102,6 +95,15 @@ export default function ProjectGallery() {
           </button>
         </div>
       </div>
+      <div className="project-jump-links" aria-label="Jump to a project">
+        {records.map((project, index) => (
+          <a href={`#${project.id}`} key={project.id}>
+            <span className="mono">0{index + 1}</span>
+            {project.title}
+            <ArrowUpRight size={15} />
+          </a>
+        ))}
+      </div>
       <div className="project-viewport">
         <div className="project-track">
           {records.map((p, i) => (
@@ -118,6 +120,9 @@ export default function ProjectGallery() {
                 <h3>{p.title}</h3>
                 <p>{p.overview}</p>
                 <p className="project-problem">{p.problem}</p>
+                <p className="project-role">
+                  <strong>My role</strong> {p.role}.
+                </p>
                 <div className="project-tags">
                   {p.stack.map((t) => (
                     <span key={t}>{t}</span>
@@ -125,30 +130,29 @@ export default function ProjectGallery() {
                 </div>
                 <details>
                   <summary>
-                    Implementation & role <span>+</span>
+                    Technical details <span>+</span>
                   </summary>
-                  <p>{p.role}.</p>
                   <ul>
                     {p.highlights.map((h) => (
                       <li key={h}>{h}</li>
                     ))}
                   </ul>
-                  <p>{p.outcome ?? "Outcome details pending."}</p>
+                  {p.outcome && <p>{p.outcome}</p>}
                 </details>
-                <div className="project-links">
-                  {p.github ? (
-                    <a href={p.github} target="_blank" rel="noreferrer">
-                      Repository <ArrowUpRight size={15} />
-                    </a>
-                  ) : (
-                    <span className="mono muted">REPOSITORY LINK PENDING</span>
-                  )}
-                  {p.demo && (
-                    <a href={p.demo} target="_blank" rel="noreferrer">
-                      Live demo <ArrowUpRight size={15} />
-                    </a>
-                  )}
-                </div>
+                {(p.github || p.demo) && (
+                  <div className="project-links">
+                    {p.github ? (
+                      <a href={p.github} target="_blank" rel="noreferrer">
+                        Repository <ArrowUpRight size={15} />
+                      </a>
+                    ) : null}
+                    {p.demo && (
+                      <a href={p.demo} target="_blank" rel="noreferrer">
+                        Live demo <ArrowUpRight size={15} />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </article>
           ))}

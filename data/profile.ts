@@ -4,6 +4,9 @@ export const profile = {
   brand: "blimmy",
   headline: "Computer Science · Cybersecurity · IT Audit",
   tagline: "Breaking Systems. Building Better Ones.",
+  focus: "IT audit & cybersecurity consulting",
+  summary:
+    "Final-year Computer Science student at Mahidol University International College, with hands-on experience building tools for auditors.",
   introduction:
     "A final-year Computer Science student at Mahidol University International College, exploring the space between cybersecurity, systems, and the people who use them.",
   about:

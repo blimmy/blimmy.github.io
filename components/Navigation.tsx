@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { ArrowDownToLine, Menu, X, ArrowUpRight } from "lucide-react";
 import { profile } from "@/data/profile";
 const links = [
-  ["about", "About"],
-  ["achievements", "Achievements"],
-  ["projects", "Projects"],
+  ["about", "Overview"],
   ["experience", "Experience"],
+  ["projects", "Projects"],
+  ["achievements", "Achievements"],
   ["contact", "Contact"],
 ];
 export default function Navigation() {
@@ -41,7 +41,7 @@ export default function Navigation() {
       >
         blimmy<span aria-hidden="true">✳</span>
       </a>
-      <span className="header-caption mono">PERSONAL RESEARCH ENVIRONMENT</span>
+      <span className="header-caption mono">SECURITY / SYSTEMS / PEOPLE</span>
       <nav
         aria-label="Main navigation"
         id="main-navigation"

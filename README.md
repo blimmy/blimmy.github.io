@@ -1,6 +1,6 @@
 # blimmy
 
-Siriphanaphorn Sirikun’s cybersecurity portfolio. A static Next.js site with an editorial design, GSAP scroll storytelling, an interactive terminal, and an MDX research archive.
+Siriphanaphorn Sirikun’s cybersecurity portfolio. A static Next.js site with a concise profile overview, visible experience and project roles, optional GSAP motion, an interactive terminal, and an MDX research archive.
 
 **Website:** https://blimmy.github.io · **Source:** https://github.com/blimmy/blimmy.github.io
 
@@ -86,7 +86,7 @@ Use fenced code blocks with a language (`python`, `bash`, `c`, etc.) for highlig
 
 ### 4. เพิ่มภาพโปรเจกต์ / Add project screenshots
 
-Copy an optimized image into `public/assets/projects/` and set the project’s `image` path in `data/projects.ts`. Fill `github`, `demo`, and `outcome` only with verified information. Null images retain the custom typographic artwork and “screenshot pending” label. Null repository links remain non-clickable pending labels. Edit `highlights`, `stack`, `role`, and `problem` as the project develops.
+Copy an optimized image into `public/assets/projects/` and set the project’s `image` path in `data/projects.ts`. Fill `github`, `demo`, and `outcome` only with verified information. Null images retain the custom typographic artwork. Repository and demo links are shown only when provided. Edit `highlights`, `stack`, `role`, and `problem` as the project develops.
 
 For best performance, use WebP or AVIF where possible, roughly 1600 pixels wide or less, and avoid unnecessarily large files. The gallery lazy-loads images below the fold.
 
@@ -107,7 +107,7 @@ Replace the asset in `public/assets/resume/` and update `profile.resume` in `dat
 
 The terminal accepts only predefined commands; no `eval`, shell execution, or network commands. Commands: `help`, `whoami`, `ls`, `skills`, `achievements`, `projects`, `experience`, `certificates`, `contact`, `clear`, `cat resume.txt`. Arrow keys recall up to 100 commands; Tab completes a recognized prefix; Ctrl+L clears. Empty input does not trap Tab. Output is capped to 50 entries.
 
-Desktop cinematic motion uses GSAP ScrollTrigger and Lenis on the same ticker. Lenis provides the only scroll easing; scroll-linked timelines use direct scrubbing to avoid compounded delay. The hero’s dark background is composited with opacity, and the fixed header uses a solid surface to reduce painting during scroll. Anchors and animated project buttons share one controller; keyboard focus reveals offscreen panels while pointer clicks keep the current position. Section size changes refresh pin positions outside the animation loop. Mobile, touch devices, reduced motion, and disabled JavaScript use a normal vertical gallery. The on-page motion toggle disables cinematic motion immediately, and OS motion preference changes are handled live. Native dialogs handle focus containment and Escape. Core content is statically rendered and available before hydration.
+The default view uses native vertical scrolling, with resume download and email on the first screen. Experience and projects precede the optional research and terminal sections. Project roles are visible without expanding details; technical disclosures, skill evidence, certificate filters, and dialogs remain interactive. On desktop viewports at least 1000px wide and 900px tall, “Explore with motion” opts into GSAP ScrollTrigger and Lenis on the same ticker. Lenis provides the only scroll easing; scroll-linked timelines use direct scrubbing to avoid compounded delay. The hero’s dark background is composited with opacity, and the fixed header uses a solid surface to reduce painting during scroll. Anchors and animated project buttons share one controller; keyboard focus reveals offscreen panels while pointer clicks keep the current position. Section size changes refresh pin positions outside the animation loop. Mobile, touch devices, reduced motion, and disabled JavaScript use a normal vertical gallery. The on-page motion toggle returns to reading view, and OS motion preference changes are handled live. Motion is never enabled automatically for a new visit. Returning to reading view preserves the current reading position. Native dialogs handle focus containment and Escape. Core content is statically rendered and available before hydration.
 
 ## Verify
 

@@ -4,6 +4,7 @@ test("navigation has a single destination and keeps the heading below the fixed 
   page,
 }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-cinematic", "true");
   await page
     .getByRole("navigation")
@@ -25,6 +26,7 @@ test("project buttons animate and pointer focus does not jump to another scroll 
   page,
 }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
   await page
     .getByRole("navigation")
     .getByRole("link", { name: "Projects", exact: true })
@@ -75,12 +77,13 @@ test("OS motion preference disables cinematic scrolling while the page is open",
   page,
 }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
   await expect(page.locator(".pin-spacer")).toHaveCount(2);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Toggle cinematic motion" }),
-  ).toHaveAttribute("aria-pressed", "true");
+  ).toHaveAttribute("aria-pressed", "false");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator(".pin-spacer")).toHaveCount(2);
 });
@@ -88,9 +91,10 @@ test("OS motion preference disables cinematic scrolling while the page is open",
 test("cinematic motion starts and cleans up when resizing between mobile and desktop", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-motion", "full");
+  await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
+  await expect(page.locator(".pin-spacer")).toHaveCount(2);
+  await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   for (let i = 0; i < 2; i++) {
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -106,7 +110,6 @@ test("pausing during a slow motion download prevents late activation", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   let release!: () => void;
@@ -119,13 +122,15 @@ test("pausing during a slow motion download prevents late activation", async ({
     await route.continue();
   });
   try {
-    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
     await download;
-    const toggle = page.getByRole("button", { name: "Toggle cinematic motion" });
+    const toggle = page.getByRole("button", {
+      name: "Toggle cinematic motion",
+    });
     await toggle.click();
     release();
     await page.waitForLoadState("networkidle");
-    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
     await expect(page.locator(".pin-spacer")).toHaveCount(0);
     await toggle.click();
     await expect(page.locator(".pin-spacer")).toHaveCount(2);
@@ -138,7 +143,6 @@ test("pausing during a slow motion download prevents late activation", async ({
 test("navigation stays at its destination when the motion engine arrives late", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   let release!: () => void;
@@ -148,7 +152,7 @@ test("navigation stays at its destination when the motion engine arrives late", 
     await route.continue();
   });
   try {
-    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
     await page
       .getByRole("navigation")
       .getByRole("link", { name: "Experience", exact: true })
@@ -157,7 +161,10 @@ test("navigation stays at its destination when the motion engine arrives late", 
       Math.round((await page.locator("#experience").boundingBox())!.y);
     await expect.poll(destinationY).toBeLessThan(100);
     release();
-    await expect(page.locator("html")).toHaveAttribute("data-cinematic", "true");
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-cinematic",
+      "true",
+    );
     await page.waitForLoadState("networkidle");
     await expect.poll(destinationY).toBeGreaterThanOrEqual(85);
     await expect.poll(destinationY).toBeLessThan(100);

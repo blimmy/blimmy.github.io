@@ -5,6 +5,20 @@ import { registerScrollController } from "./scroll-controller";
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
+function visibleProject() {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>(".project-panel"),
+  ).find((panel) => {
+    const rect = panel.getBoundingClientRect();
+    return (
+      rect.bottom > innerHeight * 0.3 &&
+      rect.top < innerHeight * 0.6 &&
+      rect.left < innerWidth / 2 &&
+      rect.right > innerWidth / 2
+    );
+  });
+}
+
 export function startCinematicMotion() {
   gsap.registerPlugin(ScrollTrigger);
   const mm = gsap.matchMedia();
@@ -14,9 +28,12 @@ export function startCinematicMotion() {
       // Navigation can finish before the optional engine arrives. Preserve the
       // visible section when pin spacers change the height above the reader.
       const initialScroll = window.scrollY;
+      const readingProject = visibleProject();
       const readingSection = Array.from(
         document.querySelectorAll<HTMLElement>("main > section"),
-      ).find((section) => section.getBoundingClientRect().bottom > innerHeight / 2);
+      ).find(
+        (section) => section.getBoundingClientRect().bottom > innerHeight / 2,
+      );
       const readingTop = readingSection?.getBoundingClientRect().top ?? 0;
       document.documentElement.dataset.cinematic = "true";
       const lenis = new Lenis({
@@ -61,11 +78,7 @@ export function startCinematicMotion() {
           },
           0,
         )
-        .to(
-          ".hero-orb",
-          { y: -65, rotation: 18, ease: "none", duration: 1 },
-          0,
-        )
+        .to(".hero-orb", { y: -65, rotation: 18, ease: "none", duration: 1 }, 0)
         // Opacity composites a static background instead of repainting the
         // full viewport with a different background color on every frame.
         .to(".hero-shade", { opacity: 1, ease: "none", duration: 0.7 }, 0.15)
@@ -106,8 +119,7 @@ export function startCinematicMotion() {
         );
       });
       const track = document.querySelector<HTMLElement>(".project-track");
-      const viewport =
-        document.querySelector<HTMLElement>(".project-viewport");
+      const viewport = document.querySelector<HTMLElement>(".project-viewport");
       const panels = Array.from(
         track?.querySelectorAll<HTMLElement>(".project-panel") ?? [],
       );
@@ -180,9 +192,21 @@ export function startCinematicMotion() {
       // limit before the first navigation can clamp to the old page height.
       ScrollTrigger.refresh();
       lenis.resize();
-      if (initialScroll > 0 && readingSection && readingSection.id !== "home") {
+      const projectPosition = readingProject
+        ? panelScroll(readingProject)
+        : null;
+      if (initialScroll > 0 && projectPosition !== null) {
+        lenis.scrollTo(projectPosition, { immediate: true, force: true });
+      } else if (
+        initialScroll > 0 &&
+        readingSection &&
+        readingSection.id !== "home"
+      ) {
         const shift = readingSection.getBoundingClientRect().top - readingTop;
-        lenis.scrollTo(window.scrollY + shift, { immediate: true, force: true });
+        lenis.scrollTo(window.scrollY + shift, {
+          immediate: true,
+          force: true,
+        });
       }
       const onAnchor = (event: MouseEvent) => {
         if (
@@ -292,5 +316,19 @@ export function startCinematicMotion() {
       };
     },
   );
-  return () => mm.revert();
+  return () => {
+    const section =
+      visibleProject() ??
+      Array.from(document.querySelectorAll<HTMLElement>("main > section")).find(
+        (element) => element.getBoundingClientRect().bottom > innerHeight / 2,
+      );
+    const top = section?.getBoundingClientRect().top ?? 0;
+    mm.revert();
+    if (section && section.id !== "home") {
+      window.scrollBy({
+        top: section.getBoundingClientRect().top - top,
+        behavior: "instant",
+      });
+    }
+  };
 }

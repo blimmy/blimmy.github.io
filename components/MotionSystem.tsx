@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
 export default function MotionSystem() {
-  const [preference, setPreference] = useState<boolean | null>(null);
+  const [enabled, setEnabled] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const paused = preference ?? reducedMotion;
+  const paused = !enabled || reducedMotion;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -16,7 +16,11 @@ export default function MotionSystem() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.motion = paused ? "reduced" : "full";
+    document.documentElement.dataset.motion = reducedMotion
+      ? "reduced"
+      : enabled
+        ? "full"
+        : "reading";
     if (paused) return;
 
     // Only load motion when the viewport can show the pinned content in full.
@@ -46,17 +50,24 @@ export default function MotionSystem() {
       media.removeEventListener("change", update);
       cleanup?.();
     };
-  }, [paused]);
+  }, [paused, enabled, reducedMotion]);
   return (
     <button
       className="motion-toggle mono"
-      aria-pressed={paused}
-      onClick={() => setPreference(!paused)}
-      title="Toggle cinematic motion"
+      aria-pressed={!paused}
+      onClick={() => setEnabled(!enabled)}
+      disabled={reducedMotion}
+      title={
+        reducedMotion
+          ? "Reduced motion follows your system preference"
+          : paused
+            ? "Explore with motion"
+            : "Return to reading view"
+      }
       aria-label="Toggle cinematic motion"
     >
       {paused ? <Play size={12} /> : <Pause size={12} />}
-      <span>{paused ? "MOTION OFF" : "MOTION ON"}</span>
+      <span>{paused ? "EXPLORE WITH MOTION" : "READING VIEW"}</span>
     </button>
   );
 }

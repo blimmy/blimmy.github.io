@@ -128,7 +128,7 @@ test("desktop cinematic scroll and gallery keyboard reachability", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.waitForTimeout(700);
+  await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
   await expect(page.locator(".pin-spacer")).toHaveCount(2);
   await page.screenshot({ path: "test-results/desktop.png" });
   await page.evaluate(() => window.scrollTo(0, 600));
@@ -157,7 +157,7 @@ test("desktop cinematic scroll and gallery keyboard reachability", async ({
   expect(box!.x).toBeLessThan(1440);
   await page.getByRole("button", { name: "Toggle cinematic motion" }).click();
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
-  await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced");
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "reading");
 });
 test("WCAG checks with motion reduced", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
